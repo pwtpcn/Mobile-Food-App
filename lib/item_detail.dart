@@ -18,191 +18,203 @@ class Detail extends StatefulWidget {
   State<Detail> createState() => _DetailState();
 }
 
-class _DetailState extends State<Detail> {
-  int amount=0;
+class _DetailState extends State<Detail> with SingleTickerProviderStateMixin {
+  int amount = 0;
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
 
-  void incrementAmount(){
+  @override
+  void initState() {
+    super.initState();
+    _animationController =
+        AnimationController(vsync: this, duration: const Duration(milliseconds: 500));
+    _fadeAnimation = CurvedAnimation(
+        parent: _animationController, curve: Curves.easeIn);
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  void incrementAmount() {
     setState(() {
       amount++;
     });
   }
 
-  void decrementAmount(){
+  void decrementAmount() {
     setState(() {
-      if(amount>0){
+      if (amount > 0) {
         amount--;
       }
     });
   }
 
   void addToCart() {
-  if (amount > 0) {
-    final shop = context.read<Shop>();
-    shop.addToCart(ProductBox(name: widget.itemName, price: widget.itemPrice, image: widget.itemImg), amount);
+    if (amount > 0) {
+      final shop = context.read<Shop>();
+      shop.addToCart(ProductBox(
+          name: widget.itemName, price: widget.itemPrice, image: widget.itemImg), amount);
 
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        backgroundColor: Colors.deepPurple[200],
-        content: const Text(
-          "Successfully added to cart",
-          style: TextStyle(fontSize: 17, color: Colors.white),
-          textAlign: TextAlign.center,
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: const Icon(Icons.done, color: Colors.white),
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          backgroundColor: Colors.deepPurple[200],
+          content: const Text(
+            "Successfully added to cart",
+            style: TextStyle(fontSize: 17, color: Colors.white),
+            textAlign: TextAlign.center,
           ),
-        ],
-      ),
-    );
+          actions: [
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+                onPressed: () => Navigator.pop(context),
+                child: const Text("OK", style: TextStyle(color: Colors.deepPurple)),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Stack(
-            children: [
-              Image.asset(
-                "assets/images/${widget.itemImg}",
-              ),
-              Positioned(
-                top: 50,
-                left: 10,                
-                child: Container(
-                  height: 40,
-                  width: 40,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white
+      body: FadeTransition(
+        opacity: _fadeAnimation,
+        child: Column(
+          children: [
+            Stack(
+              children: [
+                ClipRRect(
+                  borderRadius:
+                      const BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
+                  child: Image.asset(
+                    "assets/images/${widget.itemImg}",
+                    width: double.infinity,
+                    height: 300,
+                    fit: BoxFit.cover,
                   ),
-                  child: Center(
-                    child: IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(
-                        Icons.arrow_back_ios,
-                        color: Colors.black,
-                        size: 30,
+                ),
+                Positioned(
+                  top: 50,
+                  left: 10,
+                  child: Container(
+                    height: 40,
+                    width: 40,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withOpacity(0.8),
+                      boxShadow: [
+                        BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(2, 2)),
+                      ],
+                    ),
+                    child: Center(
+                      child: IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(
+                          Icons.arrow_back_ios,
+                          color: Colors.black,
+                          size: 22,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.itemName,
-                  style: const TextStyle(
-                    fontSize: 25, 
-                    fontWeight: FontWeight.bold
-                  ),
-                ),
-                const Divider(),
-                Text(
-                  '${widget.itemName} สักจานมั้ยคร้าบบบ',
-                  style: const TextStyle(
-                    fontSize: 20,
-                  ),
-                )
               ],
             ),
-          ),
-          
-          Container(
-            padding: const EdgeInsets.all(25),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '${widget.itemPrice}฿',
+                      widget.itemName,
                       style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
+                          fontSize: 26, fontWeight: FontWeight.bold, color: Colors.black87),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      '${widget.itemName} สักจานมั้ยคร้าบบบ 🍽️',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        color: Colors.grey,
                       ),
                     ),
+                    const Divider(),
+                    const SizedBox(height: 10),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        //minus
-                        Container(
-                          decoration: const BoxDecoration(
-                            color: Color.fromARGB(255, 199, 199, 199),
-                            shape: BoxShape.circle,
-                          ),
-                          child: IconButton(
-                            icon: const Icon(
-                              Icons.remove,
-                              color: Colors.black,
-                            ),
-                            onPressed: decrementAmount,
+                        Text(
+                          '${widget.itemPrice}฿',
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.deepPurple,
                           ),
                         ),
-
-                        //count
-                        SizedBox(
-                          width: 40,
-                          child: Center(
-                            child: Text(
+                        Row(
+                          children: [
+                            // Decrease Button
+                            IconButton(
+                              icon: const Icon(Icons.remove_circle, color: Colors.deepPurple, size: 30),
+                              onPressed: decrementAmount,
+                            ),
+                            // Count Display
+                            Text(
                               amount.toString(),
-                              style: const TextStyle(
-                                fontSize: 18,
-                              ),
+                              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                             ),
-                          ),
-                        ),
-
-                        //plus
-                        Container(
-                          decoration: const BoxDecoration(
-                            color: Color.fromARGB(255, 199, 199, 199),
-                            shape: BoxShape.circle,
-                          ),
-                          child: IconButton(
-                            icon: const Icon(
-                              Icons.add,
-                              color: Colors.black,
+                            // Increase Button
+                            IconButton(
+                              icon: const Icon(Icons.add_circle, color: Colors.deepPurple, size: 30),
+                              onPressed: incrementAmount,
                             ),
-                            onPressed: incrementAmount,
-                          ),
+                          ],
                         ),
                       ],
                     ),
+                    const SizedBox(height: 20),
+                    // Add to Cart Button with Gradient
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: addToCart,
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          backgroundColor: Colors.deepPurple,
+                        ),
+                        child: const Text(
+                          "Add to Cart",
+                          style: TextStyle(fontSize: 18, color: Colors.white),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
-                const SizedBox(height: 20),
-                // Add to Cart Button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: addToCart,
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 15),
-                      backgroundColor: Colors.deepPurple,
-                    ),
-                    child: const Text(
-                      "Add to Cart",
-                      style: TextStyle(fontSize: 18, color: Colors.white),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          )
-        ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
