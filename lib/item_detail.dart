@@ -26,10 +26,10 @@ class _DetailState extends State<Detail> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _animationController =
-        AnimationController(vsync: this, duration: const Duration(milliseconds: 500));
-    _fadeAnimation = CurvedAnimation(
-        parent: _animationController, curve: Curves.easeIn);
+    _animationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 500));
+    _fadeAnimation =
+        CurvedAnimation(parent: _animationController, curve: Curves.easeIn);
     _animationController.forward();
   }
 
@@ -56,14 +56,19 @@ class _DetailState extends State<Detail> with SingleTickerProviderStateMixin {
   void addToCart() {
     if (amount > 0) {
       final shop = context.read<Shop>();
-      shop.addToCart(ProductBox(
-          name: widget.itemName, price: widget.itemPrice, image: widget.itemImg), amount);
+      shop.addToCart(
+          ProductBox(
+              name: widget.itemName,
+              price: widget.itemPrice,
+              image: widget.itemImg),
+          amount);
 
       showDialog(
         context: context,
         barrierDismissible: false,
         builder: (context) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
           backgroundColor: Colors.deepPurple[200],
           content: const Text(
             "Successfully added to cart",
@@ -75,10 +80,12 @@ class _DetailState extends State<Detail> with SingleTickerProviderStateMixin {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
                 ),
                 onPressed: () => Navigator.pop(context),
-                child: const Text("OK", style: TextStyle(color: Colors.deepPurple)),
+                child: const Text("OK",
+                    style: TextStyle(color: Colors.deepPurple)),
               ),
             ),
           ],
@@ -97,8 +104,9 @@ class _DetailState extends State<Detail> with SingleTickerProviderStateMixin {
             Stack(
               children: [
                 ClipRRect(
-                  borderRadius:
-                      const BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
+                  borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(30),
+                      bottomRight: Radius.circular(30)),
                   child: Image.asset(
                     "assets/images/${widget.itemImg}",
                     width: double.infinity,
@@ -116,7 +124,10 @@ class _DetailState extends State<Detail> with SingleTickerProviderStateMixin {
                       shape: BoxShape.circle,
                       color: Colors.white.withOpacity(0.8),
                       boxShadow: [
-                        BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(2, 2)),
+                        BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 4,
+                            offset: Offset(2, 2)),
                       ],
                     ),
                     child: Center(
@@ -139,7 +150,8 @@ class _DetailState extends State<Detail> with SingleTickerProviderStateMixin {
                 decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -147,7 +159,9 @@ class _DetailState extends State<Detail> with SingleTickerProviderStateMixin {
                     Text(
                       widget.itemName,
                       style: const TextStyle(
-                          fontSize: 26, fontWeight: FontWeight.bold, color: Colors.black87),
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87),
                     ),
                     const SizedBox(height: 10),
                     Text(
@@ -167,24 +181,27 @@ class _DetailState extends State<Detail> with SingleTickerProviderStateMixin {
                           style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
-                            color: Colors.deepPurple,
+                            color: Color.fromARGB(255, 32, 32, 32),
                           ),
                         ),
                         Row(
                           children: [
                             // Decrease Button
                             IconButton(
-                              icon: const Icon(Icons.remove_circle, color: Colors.deepPurple, size: 30),
+                              icon: const Icon(Icons.remove_circle,
+                                  color: Color.fromARGB(255, 45, 48, 46), size: 30),
                               onPressed: decrementAmount,
                             ),
                             // Count Display
                             Text(
                               amount.toString(),
-                              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
                             ),
                             // Increase Button
                             IconButton(
-                              icon: const Icon(Icons.add_circle, color: Colors.deepPurple, size: 30),
+                              icon: const Icon(Icons.add_circle,
+                                  color: Color.fromARGB(255, 45, 48, 46), size: 30),
                               onPressed: incrementAmount,
                             ),
                           ],
@@ -195,17 +212,31 @@ class _DetailState extends State<Detail> with SingleTickerProviderStateMixin {
                     // Add to Cart Button with Gradient
                     SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: addToCart,
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 15),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                          backgroundColor: Colors.deepPurple,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Colors.teal, Colors.greenAccent],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                        child: const Text(
-                          "Add to Cart",
-                          style: TextStyle(fontSize: 18, color: Colors.white),
+                        child: ElevatedButton(
+                          onPressed: addToCart,
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            backgroundColor: Colors
+                                .transparent, // Makes background inherit from parent
+                            shadowColor: Colors
+                                .transparent, // Removes unwanted shadow effect
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: const Text(
+                            "Add to Cart",
+                            style: TextStyle(fontSize: 18, color: Colors.white),
+                          ),
                         ),
                       ),
                     ),
